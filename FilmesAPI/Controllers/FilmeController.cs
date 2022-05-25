@@ -1,4 +1,5 @@
-﻿using FilmesAPI.Models;
+﻿using FilmesAPI.Data;
+using FilmesAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,27 +10,31 @@ namespace FilmesAPI.Controllers
     [Route("filme")]
     public class FilmeController : ControllerBase
     {
-        private static List<Filme> filmes = new List<Filme>();
-        private static int id = 1;
+        private FilmeContext _conext;
+
+        public FilmeController(FilmeContext context)
+        {
+            _conext = context;
+        }
 
         [HttpPost]
         public IActionResult AdicionaFilme([FromBody] Filme filme)
         {
-            filme.Id = id++;
-            filmes.Add(filme);
+            _conext.Filmes.Add(filme);
+            _conext.SaveChanges();
             return CreatedAtAction(nameof(RecuperarFilmesById), new { Id = filme.Id}, filme);
         }
 
         [HttpGet]
         public IActionResult RecuperarFilmes()
         {
-            return Ok(filmes);
+            return Ok(_conext.Filmes);
         }
 
         [HttpGet("{id}")]
         public IActionResult RecuperarFilmesById(int id)
         {
-            var filme = filmes.FirstOrDefault(f => f.Id == id);
+            var filme = _conext.Filmes.FirstOrDefault(f => f.Id == id);
             if(filme != null)
                 return Ok(filme);
 
