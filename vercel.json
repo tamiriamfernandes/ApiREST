@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "\FilmesAPI\FilmesAPI.csproj", "use": "@now/dotnet" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "http://localhost:5000/api/$1" }
+  ]
+}
